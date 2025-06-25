@@ -11,7 +11,7 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
   <script src="config.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
       document.title = config.title;
       document.querySelector('meta[name="og:site_name"]').setAttribute("content", config.title);
       document.querySelector('meta[name="og:description"]').setAttribute("content", config.description);
@@ -37,10 +37,23 @@
       <button class="option-button" data-type="region" onclick="selectOption('region', this)">NA East</button>
     </div>
     <div class="option-group">
-      <button class="option-button active" data-type="region" onclick="oAuthLogin()">Authenticate with Google (to update the spreadsheet)</button>
+      <p class="small">Google API Integration:</p>
+      <button class="option-button auth-button" onclick="oAuthLogin()">
+        <span class="google-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <g>
+               <path fill="#4285F4" d="M19.6 10.23c0-.68-.06-1.36-.18-2H10v3.77h5.45a4.66 4.66 0 0 1-2.02 3.06v2.54h3.26c1.91-1.76 3.01-4.35 3.01-7.37z"/>
+               <path fill="#34A853" d="M10 20c2.7 0 4.96-.89 6.61-2.42l-3.26-2.54c-.91.61-2.07.97-3.35.97-2.58 0-4.77-1.75-5.55-4.09H1.1v2.57A10 10 0 0 0 10 20z"/>
+               <path fill="#FBBC05" d="M4.45 11.92A5.96 5.96 0 0 1 4.06 10c0-.67.12-1.33.33-1.92V5.51H1.1A10 10 0 0 0 0 10c0 1.56.37 3.04 1.1 4.49l3.35-2.57z"/>
+               <path fill="#EA4335" d="M10 4.01c1.47 0 2.8.51 3.84 1.51l2.88-2.88C14.95 1.13 12.69 0 10 0A10 10 0 0 0 1.1 5.51l3.35 2.57C5.23 5.76 7.42 4.01 10 4.01z"/>
+            </g>
+          </svg>
+        </span>
+        Authenticate with Google  (to update the spreadsheet)
+      </button>
       <label>
-        Spreadsheet Url:
-        <input type="text"/>
+        Spreadsheet ID:
+        <input id="spreadsheet-id" type="text" onchange="onChangeSpreadsheetUrl(this)"/>
       </label>
     </div>
     <button class="close-button" onclick="closeSettings()">Close</button>

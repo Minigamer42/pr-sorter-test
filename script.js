@@ -353,6 +353,7 @@ function result() {
 function showSettings() {
     document.getElementById("settingsModal").style.display = "block";
     document.getElementById("modalOverlay").style.display = "block";
+    document.getElementById('spreadsheet-id').value = spreadSheetId;
 }
 
 function closeSettings() {
@@ -481,28 +482,39 @@ function loadProgress() {
 }
 
 let accessToken = localStorage.getItem('googleAccessToken');
+let spreadSheetId = localStorage.getItem(`${config.localStoragePrefix}-spreadsheet-id`);
 
 async function oAuthLogin() {
-    const client = google.accounts.oauth2.initTokenClient({
-        client_id: '575550662002-hivobiln683gua375ss3b7k58afnn36t.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/spreadsheets',
-        callback: tokenResponse => {
-            accessToken = tokenResponse.access_token;
-            localStorage.setItem('googleAccessToken', accessToken);
-            alert('Login successful!');
-        }
+    return new Promise((resolve, reject) => {
+        const client = google.accounts.oauth2.initTokenClient({
+            client_id: '575550662002-hivobiln683gua375ss3b7k58afnn36t.apps.googleusercontent.com',
+            scope: 'https://www.googleapis.com/auth/spreadsheets',
+            callback: tokenResponse => {
+                if (tokenResponse && tokenResponse.access_token) {
+                    accessToken = tokenResponse.access_token;
+                    localStorage.setItem('googleAccessToken', accessToken);
+                    resolve();
+                } else {
+                    reject('Failed to login to Google.');
+                }
+            }
+        });
+        client.requestAccessToken();
     });
-    client.requestAccessToken();
 }
 
-async function updateGoogleSheetCell(spreadsheetId, range, value) {
+async function updateGoogleSheetCell(range, value) {
     const accessToken = localStorage.getItem('googleAccessToken');
     if (!accessToken) {
-        alert('You are not logged in.');
-        return;
+        try {
+            await oAuthLogin();
+        } catch (error) {
+            alert(error);
+            return;
+        }
     }
 
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadSheetId}/values/${range}?valueInputOption=RAW`;
 
     const body = {
         values: [[value]]
@@ -523,4 +535,23 @@ async function updateGoogleSheetCell(spreadsheetId, range, value) {
         const error = await response.json();
         alert('Error: ' + JSON.stringify(error));
     }
+}
+
+/**
+ * @param input {HTMLInputElement}
+ */
+function onChangeSpreadsheetUrl(input) {
+    let id = input.value;
+    if (id) {
+        let match;
+        if ((match = id.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/))) {
+            id = match[1];
+        } else if (!id.match(/^[a-zA-Z0-9-_]+$/)) {
+            alert('Invalid Spreadsheet URL / ID');
+            return;
+        }
+    }
+    spreadSheetId = id;
+    input.value = id;
+    localStorage.setItem(`${config.localStoragePrefix}-spreadsheet-id`, id);
 }
