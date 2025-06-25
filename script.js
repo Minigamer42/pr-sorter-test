@@ -479,3 +479,48 @@ function loadProgress() {
         showDuel(sortedIndexList[leftIndex][leftInnerIndex], sortedIndexList[rightIndex][rightInnerIndex]);
     }
 }
+
+let accessToken = localStorage.getItem('googleAccessToken');
+
+async function oAuthLogin() {
+    const client = google.accounts.oauth2.initTokenClient({
+        client_id: '575550662002-hivobiln683gua375ss3b7k58afnn36t.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/spreadsheets',
+        callback: tokenResponse => {
+            accessToken = tokenResponse.access_token;
+            localStorage.setItem('googleAccessToken', accessToken);
+            alert('Login successful!');
+        }
+    });
+    client.requestAccessToken();
+}
+
+async function updateGoogleSheetCell(spreadsheetId, range, value) {
+    const accessToken = localStorage.getItem('googleAccessToken');
+    if (!accessToken) {
+        alert('You are not logged in.');
+        return;
+    }
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW`;
+
+    const body = {
+        values: [[value]]
+    };
+
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+        alert('Cell updated!');
+    } else {
+        const error = await response.json();
+        alert('Error: ' + JSON.stringify(error));
+    }
+}

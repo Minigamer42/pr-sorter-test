@@ -17,6 +17,7 @@
       document.querySelector('meta[name="og:description"]').setAttribute("content", config.description);
     });
   </script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -34,6 +35,13 @@
       <button class="option-button active" data-type="region" onclick="selectOption('region', this)">Europe</button>
       <button class="option-button" data-type="region" onclick="selectOption('region', this)">NA West</button>
       <button class="option-button" data-type="region" onclick="selectOption('region', this)">NA East</button>
+    </div>
+    <div class="option-group">
+      <button class="option-button active" data-type="region" onclick="oAuthLogin()">Authenticate with Google (to update the spreadsheet)</button>
+      <label>
+        Spreadsheet Url:
+        <input type="text"/>
+      </label>
     </div>
     <button class="close-button" onclick="closeSettings()">Close</button>
   </div>
