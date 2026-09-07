@@ -28,6 +28,15 @@
       "deadline": "2026-06-05T21:59:00.000Z"
     },
     {
+      "slug": "hachi",
+      "title": "HACHI",
+      "description": "Party rank sorter for HACHI.",
+      "tags": [
+        "Artist"
+      ],
+      "deadline": "2026-09-20T16:00:00.000Z"
+    },
+    {
       "slug": "hasunosora-105",
       "title": "Hasunosora 105th",
       "description": "Party rank sorter for Hasunosora 105th",
